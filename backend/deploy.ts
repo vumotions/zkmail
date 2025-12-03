@@ -59,7 +59,7 @@ async function main() {
     EnvironmentManager.validateEnvironment();
 
     const networkConfig = EnvironmentManager.getNetworkConfig();
-    const contractName = process.env.CONTRACT_NAME || "hello-world";
+    const contractName = process.env.CONTRACT_NAME || "zkmail";
 
     // Check if contract is compiled
     if (!EnvironmentManager.checkContractCompiled(contractName)) {
@@ -131,8 +131,8 @@ async function main() {
       "index.cjs"
     );
 
-    const HelloWorldModule = await import(contractModulePath);
-    const contractInstance = new HelloWorldModule.Contract({});
+    const ZKMailModule = await import(contractModulePath);
+    const contractInstance = new ZKMailModule.Contract({});
 
     // Create wallet provider for transactions
     const walletState = await Rx.firstValueFrom(wallet.state());
@@ -177,7 +177,7 @@ async function main() {
 
     const deployed = await deployContract(providers, {
       contract: contractInstance,
-      privateStateId: "helloWorldState",
+      privateStateId: "zkmailState",
       initialPrivateState: {},
     });
 

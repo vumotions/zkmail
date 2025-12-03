@@ -48,7 +48,7 @@ async function main() {
 
     const networkConfig = EnvironmentManager.getNetworkConfig();
     const contractName =
-      deployment.contractName || process.env.CONTRACT_NAME || "hello-world";
+      deployment.contractName || process.env.CONTRACT_NAME || "zkmail";
     const walletSeed = process.env.WALLET_SEED!;
 
     console.log("Connecting to Midnight network...");

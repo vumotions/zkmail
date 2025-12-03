@@ -1,0 +1,51 @@
+pragma language_version >= 0.16;
+
+import CompactStandardLibrary;
+
+// ============================================================================
+// ZKMail - Private Messaging Contract
+// ============================================================================
+
+// Public ledger state - message metadata (visible on blockchain)
+export ledger messageCount: Opaque<"number"> = disclose(0);
+export ledger lastMessageHash: Opaque<"string"> = disclose("");
+
+// Private state - actual message content (encrypted, private)
+witness encryptedMessage: Opaque<"string"> = disclose("");
+witness sender: Opaque<"string"> = disclose("");
+witness recipient: Opaque<"string"> = disclose("");
+witness timestamp: Opaque<"number"> = disclose(0);
+
+// Circuit to send an encrypted message
+// Only metadata is public, content remains private
+export circuit sendMessage(
+    _sender: Opaque<"string">,
+    _recipient: Opaque<"string">,
+    _encryptedContent: Opaque<"string">,
+    _messageHash: Opaque<"string">,
+    _timestamp: Opaque<"number">
+): [] {
+    // Store private data (not disclosed to blockchain)
+    encryptedMessage = _encryptedContent;
+    sender = _sender;
+    recipient = _recipient;
+    timestamp = _timestamp;
+
+    // Only update public metadata
+    messageCount = disclose(disclose(messageCount) + 1);
+    lastMessageHash = _messageHash;
+}
+
+// Circuit to verify message ownership (without revealing content)
+export circuit verifyMessageOwnership(
+    _claimedSender: Opaque<"string">
+): [Opaque<"boolean">] {
+    // Prove sender identity without revealing message content
+    let isValid: Opaque<"boolean"> = disclose(disclose(sender) == disclose(_claimedSender));
+    return [isValid];
+}
+
+// Circuit to get message count (public information)
+export circuit getMessageCount(): [Opaque<"number">] {
+    return [messageCount];
+}
